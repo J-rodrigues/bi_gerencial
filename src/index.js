@@ -19,6 +19,8 @@ import drawer from './drawer'
 import BiGerencial from './biGerencial'
 
 export default class Index extends Component {
+
+
   render() {
       return (
         <Router navigationBarStyle={styles.navBar} titleStyle={styles.navTitle} leftButtonIconStyle={styles.btnColor}>
@@ -43,7 +45,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 21,
-    fontFamily: 'Roboto'
   },
   btnColor: {
     tintColor:'white'

@@ -7,8 +7,10 @@ import {
   Text,
   TouchableHighlight as Touchable,
   View,
-  Image,
-  Dimensions
+  Dimensions,
+  TouchableHighlight,
+  Switch,
+  Image
 } from 'react-native'
 
 //Plugins
@@ -27,12 +29,44 @@ import Icon from 'react-native-vector-icons/Ionicons'
 //components
 import AppStyles from './styles';
 
+var ImagePicker = require('react-native-image-picker');
+
+
 
 export default class Menu extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      modoNoturno: false,
+      painelComercial: false,
+    }
+  }
 
   _toBi = (closeDrawer) => {
     Actions.bigerencial();
     closeDrawer();
+  }
+
+  _tirarFoto() {
+    const options = {
+      quality: 1.0,
+      maxWidth: 500,
+      maxHeight: 500,
+      storageOptions: {
+          skipBackup: true,
+          path: 'images'
+      }
+    };
+    ImagePicker.showImagePicker(options, (response) => {
+        let source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
+        if(response.fileName){
+          this.setState({
+            avatarSource: source,
+            base64: response.data.toString()
+          });
+        }
+    });
   }
 
   render() {
@@ -40,58 +74,77 @@ export default class Menu extends Component {
 
     return (
         <Grid>
-          <Col style={{flex: 1}}>
-            <Row>
+          <Col>
+            <Row size={3}>
               <Col style={styles.boxMenu}>
+                <TouchableHighlight onPress={()=> this._tirarFoto()} underlayColor={'transparent'}>
+                  {this.state.avatarSource != null ?
+                    <Image source={this.state.avatarSource}
+                      style={styles.perfilImagem} resizeMode="contain" />
+                    :
+                    <Image source={{uri: 'https://leafii.com/images/defaultProfilePic.png'}}
+                        style={styles.perfilImagem} resizeMode="contain"/>
+                   }
+                  </TouchableHighlight>
                 <Text style={styles.textName}>
                   John Doe
                 </Text>
               </Col>
             </Row>
-            <Row style={styles.row}>
-              <Touchable onPress={()=>this._toBi(closeDrawer)} underlayColor={'transparent'}>
-                <View style={[AppStyles.inline, styles.line]}>
-                  <Icon name={'ios-undo'} size={25} color={"gray"} />
-                  <Text style={styles.controlText}>Test</Text>
-                </View>
-              </Touchable>
-              <Touchable>
-                <View style={[AppStyles.inline, styles.line]}>
-                  <Icon name={'ios-help-circle-outline'} size={25} color={"gray"} />
-                  <Text style={styles.controlText}>Test</Text>
-                </View>
-              </Touchable>
+            <Row size={1.5}>
+              <Col>
+                <Row>
+                  <Col size={8}>
+                    <Text style={styles.textLabel}>modo noturno</Text>
+                  </Col>
+                  <Col size={2} style={{alignItems: 'center'}}>
+                  <Switch
+                      onValueChange={(value) => this.setState({modoNoturno: value})}
+                      style={{marginTop: 10, marginBottom: 5}}
+                      value={this.state.modoNoturno} />
+                  </Col>
+                 </Row>
+                 <Row>
+                   <Col size={8}>
+                     <Text style={styles.textLabel}>Altualização do painel comercial</Text>
+                   </Col>
+                   <Col size={2} style={{alignItems: 'center'}}>
+                     <Switch
+                         onValueChange={(value) => this.setState({painelComercial: value})}
+                         style={{marginTop: 10, marginBottom: 5}}
+                         value={this.state.painelComercial} />
+                   </Col>
+                  </Row>
+              </Col>
             </Row>
-            <View style={[AppStyles.hr]} />
-            <Row style={styles.row}>
-              <Text style={styles.allLabels}>All labels</Text>
-              <Touchable>
-                <View style={[AppStyles.inline, styles.line]}>
-                  <Icon name={'md-unlock'} size={25} color={"gray"} />
-                  <Text style={styles.controlText}>Test</Text>
-                </View>
-              </Touchable>
-              <Touchable>
-                <View style={[AppStyles.inline, styles.line]}>
-                  <Icon name={'md-lock'} size={25} color={"gray"} />
-                  <Text style={styles.controlText}>Test</Text>
-                </View>
-              </Touchable>
+            <View style={AppStyles.hr} />
+            <Row size={3}>
+              <Col>
+                <TouchableHighlight>
+                  <View style={[AppStyles.inline, styles.line]}>
+                    <Icon name={'md-bookmark'} size={25} color={"gray"} />
+                    <Text style={styles.controlText}>Test</Text>
+                  </View>
+                </TouchableHighlight>
+                <TouchableHighlight>
+                  <View style={[AppStyles.inline, styles.line]}>
+                    <Icon name={'md-add'} size={25} color={"gray"} />
+                    <Text style={styles.controlText}>Test</Text>
+                  </View>
+                </TouchableHighlight>
+                <TouchableHighlight>
+                  <View style={[AppStyles.inline, styles.line]}>
+                    <Icon name={'md-briefcase'} size={25} color={"gray"} />
+                    <Text style={styles.controlText}>Test</Text>
+                  </View>
+                </TouchableHighlight>
+              </Col>
             </Row>
-            <View style={[AppStyles.hr]} />
-            <Row style={styles.row}>
-              <Touchable>
-                <View style={[AppStyles.inline, styles.line]}>
-                  <Icon name={'md-checkbox-outline'} size={25} color={"gray"} />
-                  <Text style={styles.controlText}>Test</Text>
-                </View>
-              </Touchable>
-              <Touchable>
-                <View style={[AppStyles.inline, styles.line]}>
-                  <Icon name={'ios-barcode'} size={25} color={"gray"} />
-                  <Text style={styles.controlText}>Test</Text>
-                </View>
-              </Touchable>
+            <View style={AppStyles.hr} />
+            <Row size={1.5}>
+              <Col>
+
+              </Col>
             </Row>
           </Col>
         </Grid>
@@ -100,6 +153,12 @@ export default class Menu extends Component {
 }
 
 const styles = StyleSheet.create({
+  perfilImagem: {
+    height: 60,
+    width: 60,
+    borderRadius: 40,
+    marginLeft: 20
+  },
   controlText: {
     color: 'gray',
     marginLeft: 35,
@@ -108,7 +167,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   },
   line: {
-    marginBottom: 25
+    margin: 15,
+    alignItems: 'center'
+
   },
   textName: {
     margin: 20,
@@ -128,5 +189,8 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     fontWeight: "400",
     color: 'gray'
+  },
+  textLabel: {
+    margin: 10
   }
 })
